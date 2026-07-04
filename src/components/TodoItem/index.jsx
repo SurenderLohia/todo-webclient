@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,23 +19,26 @@ function TodoItem(props) {
     mode = 'view'
   } = props;
 
-  const [todoItemText, setTodoItemText] = useState('Suren');
+  const [todoItemText, setTodoItemText] = useState(text);
 
-  console.log('todoItemText ===>');
+  // Update the edit text when props change or when entering edit mode
+  useEffect(() => {
+    setTodoItemText(text);
+  }, [text, mode]);
 
   const onTodoItemTextChange = (e) => {
-    console.log('TodoItem text changed:', e.target.value);
     setTodoItemText(e.target.value);
   };
 
   const handleCloseEditMode = (id) => {
     closeTodoItemEditMode(id);
-    setTodoItemText(text);
   };
 
   const handleEditSave = (e) => {
     e.preventDefault();
-    updateTodoItemText(id, todoItemText);
+    if (todoItemText.trim() !== '') {
+      updateTodoItemText(id, todoItemText);
+    }
   };
 
   return (
@@ -45,7 +48,7 @@ function TodoItem(props) {
           <Checkbox
             id={`checkbox-${id}`}
             checked={isCompleted} 
-            onCheckedChange={() => toggleTodoItemComplete(id)}
+            onCheckedChange={(checked) => toggleTodoItemComplete(id, checked)}
           />
           <div className="flex-1">
             <label
@@ -92,6 +95,7 @@ function TodoItem(props) {
             variant="ghost" 
             size="icon" 
             className="h-8 w-8" 
+            type="button"
             onClick={() => handleCloseEditMode(id)}
           >
             <XIcon className="h-4 w-4" />
@@ -103,15 +107,15 @@ function TodoItem(props) {
 }
 
 TodoItem.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   text: PropTypes.string.isRequired,
-  isCompleted: PropTypes.bool.isRequired,
+  isCompleted: PropTypes.bool,
+  toggleTodoItemComplete: PropTypes.func,
+  openTodoItemEditMode: PropTypes.func,
+  closeTodoItemEditMode: PropTypes.func,
+  updateTodoItemText: PropTypes.func,
+  deleteTodoItem: PropTypes.func,
   mode: PropTypes.oneOf(['view', 'edit']),
-  toggleTodoItemComplete: PropTypes.func.isRequired,
-  openTodoItemEditMode: PropTypes.func.isRequired,
-  closeTodoItemEditMode: PropTypes.func.isRequired,
-  updateTodoItemText: PropTypes.func.isRequired,
-  deleteTodoItem: PropTypes.func.isRequired,
 };
 
 export { TodoItem };
