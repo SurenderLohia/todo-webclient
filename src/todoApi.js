@@ -9,7 +9,7 @@ export const todoApi = createApi({
     getTodos: builder.query({
       query: (filters) => ({
         url: 'todos',
-        params: filters, // Optional: pass filters as query parameters
+        params: filters === 'all' ? {} : {is_completed: filters === 'completed'}, 
       }),
       providesTags: ['Todo'], 
     }),

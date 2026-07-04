@@ -22,16 +22,7 @@ function TodoList() {
   const [newTodo, setNewTodo] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
 
-  // Queries run automatically on component mount
-  const getQueryFilter = () => {
-    if(selectedFilter === "pending") {
-      return { is_completed: false };
-    } else if(selectedFilter === "completed") {
-      return { is_completed: true };
-    }
-    return {};
-  };
-  const { data: todos, isLoading, isError, error } = useGetTodosQuery(getQueryFilter());
+  const { data: todos, isLoading, isError, error } = useGetTodosQuery(selectedFilter);
 
   const todoList = todos && todos.list || [];
   const todoSummary = todos && todos.summary || { total: 0, completed: 0, pending: 0 };
