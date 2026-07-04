@@ -23,9 +23,21 @@ function TodoList() {
   const [selectedFilter, setSelectedFilter] = useState("all");
 
   // Queries run automatically on component mount
-  const { data: todos, isLoading, isError, error } = useGetTodosQuery();
+  const getQueryFilter = () => {
+    if(selectedFilter === "pending") {
+      return { is_completed: false };
+    } else if(selectedFilter === "completed") {
+      return { is_completed: true };
+    }
+    return {};
+  };
+  const { data: todos, isLoading, isError, error } = useGetTodosQuery(getQueryFilter());
 
-  console.log('log ===> todos', todos);
+  const todoList = todos && todos.list || [];
+  const todoSummary = todos && todos.summary || { total: 0, completed: 0, pending: 0 };
+  
+  console.log('todoList:', todoList);
+  console.log('todoSummary:', todoSummary);
   
   // Mutations return a trigger function and an object with status flags
   const [addTodo] = useAddTodoMutation();
@@ -89,8 +101,19 @@ function TodoList() {
         <Input type="text" id="add-task" placeholder="Add todo item" value={newTodo} onChange={onAddTodoChange} />
         <Button type="submit" variant="secondary">Add</Button>
       </form>
+      <div className="flex gap-3">
+        <Button size="sm" variant={selectedFilter === "all" ? "default" : "outline"} onClick={() => setSelectedFilter("all")}>
+          All({todoSummary.all})
+        </Button>
+        <Button size="sm" variant={selectedFilter === "pending" ? "default" : "outline"} onClick={() => setSelectedFilter("pending")}>
+          Pending({todoSummary.pending})
+        </Button>
+        <Button size="sm" variant={selectedFilter === "completed" ? "default" : "outline"} onClick={() => setSelectedFilter("completed")}>
+          Completed({todoSummary.completed})
+        </Button>
+      </div>
       <div className="flex flex-col gap-1">
-        {todos && todos.map((todo) => (
+        {todoList.map((todo) => (
           <TodoItem 
             key={todo.id} 
             id={todo.id} 

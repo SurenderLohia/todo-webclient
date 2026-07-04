@@ -7,7 +7,10 @@ export const todoApi = createApi({
   endpoints: (builder) => ({
     // 1. READ (Get all todos)
     getTodos: builder.query({
-      query: () => 'todos',
+      query: (filters) => ({
+        url: 'todos',
+        params: filters, // Optional: pass filters as query parameters
+      }),
       providesTags: ['Todo'], 
     }),
     
