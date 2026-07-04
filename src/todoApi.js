@@ -1,8 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+const BASE_URL = 'https://todo-express-sqlite-1ggcz12qj-surenderlohias-projects.vercel.app/'; // Local back-end URL: http://localhost:3000/
 export const todoApi = createApi({
   reducerPath: 'todoApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/' }), // Replace with your API URL
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   tagTypes: ['Todo'], // Used for automatic cache invalidation (auto-refetching)
   endpoints: (builder) => ({
     // 1. READ (Get all todos)
